@@ -1,11 +1,14 @@
+import sys
 
 from PyQt4 import QtGui
+
 from config import Config
+
 from mainwindow_ui import Ui_mainWindow
 from anchorswindow import AnchorsWindow
 from dynamicswindow import DynamicsWindow
 from zoneswindow import ZonesWindow
-import sys
+from serialcontroller import SerialController
 
 
 class MainWindow(QtGui.QMainWindow):
@@ -39,6 +42,10 @@ class MainWindow(QtGui.QMainWindow):
 if __name__ == "__main__":
     Config.load_config()
     app = QtGui.QApplication(sys.argv)
+    controller = SerialController()
+    controller.open_serial()
+
     myapp = MainWindow()
     myapp.show()
+    controller.location_updated.connect(myapp.ui.widget.print_position)
     sys.exit(app.exec_())
