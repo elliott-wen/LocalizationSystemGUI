@@ -4,8 +4,8 @@ import struct
 import serial
 from PyQt4 import QtCore
 
-from particlefilter import ParticleFilter
 from config import Config
+from kalmanfilter import KalmanFilter
 
 
 # from kalmanfilter import KalmanFilter
@@ -23,7 +23,7 @@ class SerialController(QtCore.QThread):
         self.serial_fd = None
         self.database_engine = None
         self.filters = {}
-
+        # self.file = open('d:/2.txt','w')
 
     def open_serial(self):
         self.serial_fd = serial.Serial(self.portname, 115200)
@@ -49,14 +49,15 @@ class SerialController(QtCore.QThread):
             distance = (float)(struct.unpack('>I', data[4:8])[0]) / 100
 
             checksum = data[8]
-            #if anchorId == 1:
-            #print("%d %d %f %d %d"%(tagId,anchorId,distance,rssi,sequence))
+            print("%d %d %f %d %d" % (tagId, anchorId, distance, rssi, sequence))
+
             self.handleData(tagId, anchorId, distance, rssi, sequence)
 
     def handleData(self, tagId, anchorId, distance, rssi, sequence):
         if tagId not in self.filters.keys():
-            filter = ParticleFilter()
-            filter.init_particles()
+            # filter = ParticleFilter()
+            # filter.init_particles()
+            filter = KalmanFilter()
             self.filters[tagId] = filter
         location = self.filters[tagId].update(anchorId, distance)
         if location != None:

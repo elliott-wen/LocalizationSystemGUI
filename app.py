@@ -3,7 +3,6 @@ import sys
 from PyQt4 import QtGui
 
 from config import Config
-
 from mainwindow_ui import Ui_mainWindow
 from anchorswindow import AnchorsWindow
 from dynamicswindow import DynamicsWindow
@@ -43,6 +42,7 @@ if __name__ == "__main__":
     Config.load_config()
     app = QtGui.QApplication(sys.argv)
     controller = SerialController()
+
     controller.open_serial()
 
     myapp = MainWindow()

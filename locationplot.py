@@ -23,7 +23,7 @@ class LocationPlot(QtGui.QWidget):
          self.vbl.addWidget(self.toolbar)
          self.setLayout(self.vbl)
          self.figure.tight_layout()
-
+         self.tag_mark = {}
      def adjust_layout(self):
          max_row = 0
          max_column = 0
@@ -33,8 +33,8 @@ class LocationPlot(QtGui.QWidget):
                  max_row = item[0]
              if item[1] > max_column:
                  max_column = item[1]
-         self.ax.set_xlim([-0.2, max_column * 1.1])
-         self.ax.set_ylim([-0.2, max_row * 1.1])
+         self.ax.set_xlim([-3, 14])
+         self.ax.set_ylim([-3, 14])
          self.ax.set_title("Location")
 
      def set_up_anchors(self):
@@ -51,6 +51,14 @@ class LocationPlot(QtGui.QWidget):
              self.ax.add_patch(rect_patch)
 
      def print_position(self, tagId, position):
-
-         self.ax.scatter(position[0], position[1])
+         if tagId not in self.tag_mark.keys():
+             rect_patch = matplotlib.patches.Rectangle(position, 0.2, 0.2);
+             self.tag_mark[tagId] = rect_patch
+             self.ax.add_patch(rect_patch)
+         else:
+             rect_patch = self.tag_mark[tagId]
+             # rect_patch.remove()
+             rect_patch = matplotlib.patches.Rectangle(position, 0.2, 0.2);
+             self.tag_mark[tagId] = rect_patch
+             self.ax.add_patch(rect_patch)
          self.canvas.draw()

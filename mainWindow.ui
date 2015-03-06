@@ -56,6 +56,26 @@
         <attribute name="horizontalHeaderStretchLastSection">
          <bool>true</bool>
         </attribute>
+        <row>
+         <property name="text">
+          <string>1</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>2</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>3</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>4</string>
+         </property>
+        </row>
         <column>
          <property name="text">
           <string>TagID</string>
@@ -76,6 +96,86 @@
           <string>Event</string>
          </property>
         </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string>Tag 1</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string>(5,4,0)</string>
+         </property>
+        </item>
+        <item row="0" column="2">
+         <property name="text">
+          <string>10:03 2015/3/4</string>
+         </property>
+        </item>
+        <item row="0" column="3">
+         <property name="text">
+          <string>Warning: walking towards the danger zone 1.</string>
+         </property>
+        </item>
+        <item row="1" column="0">
+         <property name="text">
+          <string>Tag 2</string>
+         </property>
+        </item>
+        <item row="1" column="1">
+         <property name="text">
+          <string>(1,2,0)</string>
+         </property>
+        </item>
+        <item row="1" column="2">
+         <property name="text">
+          <string>10:03 2015/3/4</string>
+         </property>
+        </item>
+        <item row="1" column="3">
+         <property name="text">
+          <string>Normal</string>
+         </property>
+        </item>
+        <item row="2" column="0">
+         <property name="text">
+          <string>Tag 3</string>
+         </property>
+        </item>
+        <item row="2" column="1">
+         <property name="text">
+          <string>(3,3,0)</string>
+         </property>
+        </item>
+        <item row="2" column="2">
+         <property name="text">
+          <string>10:03 2015/3/4</string>
+         </property>
+        </item>
+        <item row="2" column="3">
+         <property name="text">
+          <string>Normal</string>
+         </property>
+        </item>
+        <item row="3" column="0">
+         <property name="text">
+          <string>Tag 4</string>
+         </property>
+        </item>
+        <item row="3" column="1">
+         <property name="text">
+          <string>(5,2,0)</string>
+         </property>
+        </item>
+        <item row="3" column="2">
+         <property name="text">
+          <string>10:03 2015/3/4</string>
+         </property>
+        </item>
+        <item row="3" column="3">
+         <property name="text">
+          <string>Normal</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -88,7 +188,7 @@
      <x>0</x>
      <y>0</y>
      <width>1440</width>
-     <height>17</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuApplication">

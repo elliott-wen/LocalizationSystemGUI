@@ -11,17 +11,17 @@ class ParticleFilter:
     map_granularity = 0.1
     # per_state_particle = 1
     max_walking_speed = 2
-    distance_observation_stdvariance = 3
+    distance_observation_stdvariance = 5
 
 
     def __init__(self):
         self.max_row_state = 0
         self.max_column_state = 0
-        self.particle_number = 500
+        self.particle_number = 1000
         self.particles = []
         self.distances_buffer = {}
-        self.distances_buffer_counter = 0
-
+        self.distances_buffer_counter = {}
+        self.distances_volt = 0
     def init_particles(self):
         max_row = 0
         max_column = 0
@@ -31,9 +31,11 @@ class ParticleFilter:
                 max_row = item[0]
             if item[1] > max_column:
                 max_column = item[1]
-        logging.info("Map statistic: max_row:%d max_column:%d" % (max_row, max_column))
         self.max_row_state = max_row / self.map_granularity
         self.max_column_state = max_column / self.map_granularity
+        logging.warning("Map statistic: max_row:%f max_column:%f, (%f,%f)" % (
+        max_row, max_column, self.max_row_state, self.max_column_state))
+
         # self.particle_number = self.max_column_state * self.max_row_state * self.per_state_particle
         i = 00
         while ( i < self.particle_number):
@@ -105,7 +107,7 @@ class ParticleFilter:
             new_particles.append(self.particles[result])
             #print(self.particles[result])
             i += 1
-
+        # print(max_probability)
         final_x = (result_particle[0] - 0.5) * self.map_granularity
         final_y = (result_particle[1] - 0.5) * self.map_granularity
 
@@ -118,24 +120,45 @@ class ParticleFilter:
 
 
     def calc_probability_based_on_observation(self, observation_distance, particle_distance):
-        return math.exp(-(observation_distance - particle_distance) * (observation_distance - particle_distance) / (
+        if observation_distance < 0.02:
+            return 1
+        else:
+            probability = math.exp(
+                -(observation_distance - particle_distance) * (observation_distance - particle_distance) / (
             2 * self.distance_observation_stdvariance * self.distance_observation_stdvariance))
+            return probability
+
 
     def update(self, anchorId, distance):
         # Init
         if len(self.distances_buffer) == 0:
             for anchor_key in Config.anchors:
                 self.distances_buffer[int(anchor_key)] = 0
-
+                self.distances_buffer_counter[int(anchor_key)] = 0
         #Assign
+        for item in self.distances_buffer_counter:
+            temp = self.distances_buffer_counter[item]
+            self.distances_buffer_counter[item] = temp + 1
+            if temp > 5000:
+                # self.distances_buffer[temp] = 0.0
+                logging.warning("Unable to receive node:%d" % item)
+
+        # lastDistance = self.distances_buffer[anchorId];
+        # if (math.fabs(distance-lastDistance)<2):
+        # self.distances_buffer[anchorId] = distance
+        # else:
+        #
+        #     self.distances_buffer[anchorId] = lastDistance + 2;
+        self.distances_buffer_counter[anchorId] = 0
         self.distances_buffer[anchorId] = distance
-        self.distances_buffer_counter += 1
-        if (self.distances_buffer_counter > 10):
-            self.distances_buffer_counter = 0
+
+        self.distances_volt += 1
+        if self.distances_volt > 15:
+            self.distances_volt = 0
             self.particles_time_elapse()
-            #print(self.distances_buffer)
-            #logging.warning("H")
             result = self.likelihood_reweight(self.distances_buffer)
+            for item in self.distances_buffer:
+                self.distances_buffer[item] = 0
             return result
         #logging.warning("N")
         return None
@@ -154,26 +177,24 @@ class ParticleFilter:
 # totalerror = 0
 # sign = 1
 # while i < time:
-# x += 0.2*sign
+#     x += 0.2*sign
 # y += 0.2*sign
-#     if(x>=10):
+#     if(x>=4):
 #         sign = -1;
 #     if(x<=0):
 #         sign = 1;
-#     x = 5
-#     y = 5
 #
-#     distance[1] = math.sqrt((x-0)**2+(y-0)**2)+np.random.normal(loc=0.0, scale=0.1, size=None)
-#     distance[2] = math.sqrt((x-10)**2+(y-0)**2)+np.random.normal(loc=0.0, scale=0.1, size=None)
-#     distance[3] = math.sqrt((x-10)**2+(y-10)**2)+np.random.normal(loc=0.0, scale=0.1, size=None)
-#     distance[4] = math.sqrt((x-0)**2+(y-10)**2)+np.random.normal(loc=0.0, scale=0.1, size=None)
+#     for key in Config.anchors:
+# item = Config.anchors[key]
+#         distance[int(key)] = math.sqrt((x-item[0])**2+(y-item[1])**2)+np.random.normal(loc=0.0, scale=1, size=None)
+#
 #
 #     filter.particles_time_elapse()
 #     result = filter.likelihood_reweight(distance)
-#     x1 = (result[0]-0.5)*filter.map_granularity
-#     y1 = (result[1]-0.5)*filter.map_granularity
+#     x1 = result[0]
+# y1 = result[1]
 #     error = (x-x1)**2 + (y-y1)**2
 #     totalerror+=error
-#     #print("realposition: %f %f calcposition %f %f error:%f" % (x,y,x1,y1,error))
-#     i += 1
+#     print("realposition: %f %f calcposition %f %f error:%f" % (x,y,x1,y1,error))
+# i += 1
 # print("Error:%f"%(totalerror/time))
